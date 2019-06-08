@@ -18,7 +18,7 @@ node {
     def registryCredentialsId = "dockerhub_id"
 
 
-    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVarialbe: 'USER', passwordVariable: 'PASS')]) {
+    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
         stage('Login') {
             sh "docker login -u ${USER} -p ${PASS}"
         }
@@ -37,7 +37,7 @@ node {
         anchore bailOnFail: false, forceAnalyze: true, name: 'anchore_images'
     }
 
-    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVarialbe: 'USER', passwordVariable: 'PASS')]) {
+    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
         stage('Login') {
             sh "docker login -u ${USER} -p ${PASS}"
         }
