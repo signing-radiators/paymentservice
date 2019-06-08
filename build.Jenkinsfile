@@ -20,7 +20,7 @@ node {
 
     withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
         stage('Login') {
-            sh "docker login -u ${USER} -p ${PASS}"
+            sh "docker login -u ${USER} -p ${PASS} ${registryFqdn}"
         }
 
         stage('Build for security scan') {
