@@ -24,7 +24,7 @@ node {
         }
 
         stage('Build for security scan') {
-            sh "docker build -t ${imageName}:${securityScanTag} ${DOCKER_CONTEXT}"
+            sh "docker build -t ${registryFqdn}/${imageName}:${securityScanTag} ${DOCKER_CONTEXT}"
         }
 
         stage('Push for security scan') {
