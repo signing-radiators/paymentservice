@@ -18,14 +18,17 @@ node {
     def registryCredentialsId = "dockerhub_id"
 
 
-    def image;
-    docker.withRegistry(registryUrl, registryCredentialsId) {
+    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVarialbe: 'user', passwordVariable: 'pass')]) {
+        stage('Login') {
+            sh "docker login -u ${user} -p ${pass}"
+        }
+
         stage('Build for security scan') {
-            image = docker.build("${imageName}:${securityScanTag}", DOCKER_CONTEXT);
+            sh "docker build -t ${imageName}:${securityScanTag} ${DOCKER_CONTEXT}"
         }
 
         stage('Push for security scan') {
-            image.push();
+            sh "docker push ${registryFqdn}/${imageName}:${securityScanTag}"
         }
     }
 
@@ -34,9 +37,14 @@ node {
         anchore bailOnFail: false, forceAnalyze: true, name: 'anchore_images'
     }
 
-    docker.withRegistry(registryUrl, registryCredentialsId) {
-        stage('Push') {
-            image.push("${deployTag}");
+    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVarialbe: 'user', passwordVariable: 'pass')]) {
+        stage('Login') {
+            sh "docker login -u ${user} -p ${pass}"
+        }
+
+        stage('Push for security scan') {
+            sh "docker tag ${registryFqdn}/${imageName}:${securityScanTag} ${registryFqdn}/${imageName}:${deployTag}"
+            sh "docker push ${registryFqdn}/${imageName}:${deployTag}"
         }
     }
 
